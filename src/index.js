@@ -1,25 +1,32 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
-const connection = mysql.createConnection({
+const pool = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'ng_games_db'
 });
 
-connection.connect();
+// pool.getConnection(function(err) {
+//     if (!err) {
+//         console.log('DB is connected');
+//     }
+// });
 
-connection.query('SELECT * FROM games',
-function(err, rows, fields) {
-    if(!err)
-        console.log('The sol is:', rows);
-    else
-        console.log('Error', err);
-});
-
-app.use('/', (req, res) => {
-    res.status(200).send('La API funciona correctamente');
+app.get("/", function(req, res){
+  var array = pool.query('SELECT * FROM games', function(err, rows) {
+      if(err) throw err;
+      console.log(rows);
+      res.json(rows);
   });
+  
+    
+})
+
+
+// app.use('/', (req, res) => {
+//     res.status(200).send('La API funciona correctamente');
+//   });
   
   app.listen(3000);
